@@ -35,8 +35,8 @@
 
 - **Runtime**: Node.js v24+
 - **Framework**: NestJS v11 (모노레포 모드)
-- **Language**: TypeScript (strict mode)
-- **LLM**: Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) via `@anthropic-ai/sdk`
+- **Language**: TypeScript
+- **LLM**: Claude Haiku 4.5 (`claude-haiku`) via `@anthropic-ai/sdk`
 - **Embedding**: `@xenova/transformers` 로컬 실행 (all-MiniLM-L6-v2, 384차원)
 - **Database**: PostgreSQL 17 + pgvector (Docker)
 - **ORM**: TypeORM (`@nestjs/typeorm`)
