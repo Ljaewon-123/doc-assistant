@@ -82,3 +82,7 @@ npx typeorm migration:run       # 마이그레이션 실행
 docker compose up -d            # PostgreSQL 시작
 docker compose down             # PostgreSQL 종료
 ```
+
+### TIP
+
+하나의 기능이 끝날때마다 백업 개념으로 커밋해 놓을것
