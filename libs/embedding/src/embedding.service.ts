@@ -2,8 +2,13 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 // @xenova/transformers는 ESM이므로 dynamic import 사용
+interface PipelineOptions {
+  pooling: 'mean' | 'cls' | 'none';
+  normalize: boolean;
+}
 type Pipeline = (
   text: string | string[],
+  options: PipelineOptions,
 ) => Promise<{ tolist: () => number[][] }>;
 
 @Injectable()
@@ -30,12 +35,18 @@ export class EmbeddingService implements OnModuleInit {
   }
 
   async embed(text: string): Promise<number[]> {
-    const result = await this.pipeline(text);
+    const result = await this.pipeline(text, {
+      pooling: 'mean',
+      normalize: true,
+    });
     return result.tolist()[0];
   }
 
   async embedMany(texts: string[]): Promise<number[][]> {
-    const result = await this.pipeline(texts);
-    return result.tolist();
+    const results: number[][] = [];
+    for (const text of texts) {
+      results.push(await this.embed(text));
+    }
+    return results;
   }
 }
