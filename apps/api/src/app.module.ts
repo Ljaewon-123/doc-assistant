@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
-import { CommonModule } from '@app/common';
+import { Module, ValidationPipe } from '@nestjs/common';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { CommonModule, HttpExceptionFilter } from '@app/common';
 import { DatabaseModule } from '@app/database';
 import { DocumentsModule } from './documents/documents.module';
 import { ChatModule } from './chat/chat.module';
@@ -15,5 +16,15 @@ import { HealthController } from './health/health.controller';
     EditorModule,
   ],
   controllers: [HealthController],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({ transform: true, whitelist: true }),
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
