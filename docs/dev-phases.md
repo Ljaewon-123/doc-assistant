@@ -7,30 +7,32 @@
 - LangChain.js를 최소한으로 사용한 RAG 파이프라인 구축
 - 포트폴리오에 어필할 수 있는 수준의 완성도
  
-## Phase 1: 기반 세팅 (1~2주)
-1. `nest new doc-assistant` → 모노레포 전환 → `docker compose up`
-2. `libs/common` — ConfigModule 설정, HttpExceptionFilter
-3. `libs/database` — TypeORM 연결, 엔티티 정의, pgvector 마이그레이션
-4. tsconfig path alias 확인, 모노레포 빌드 확인
- 
-## Phase 2: 업로드 → 임베딩 (1주)
-5. `libs/parser` — MarkdownStrategy 먼저
-6. `libs/embedding` — Xenova 모델 로딩 (싱글톤) + ChunkingService
-7. `apps/api/documents` — POST /upload 엔드포인트
-8. 테스트: md 파일 업로드 → pgvector에 벡터 저장 확인
- 
-## Phase 3: QA (1주)
-9. `libs/llm` — ClaudeService + RagService
-10. `apps/api/chat` — POST /ask 엔드포인트
-11. Swagger 문서화
-12. 테스트: 질문 → 관련 청크 검색 → Claude 답변 확인
- 
+## Phase 1: 기반 세팅 (1~2주) ✅
+1. ✅ `nest new doc-assistant` → 모노레포 전환 → `docker compose up`
+2. ✅ `libs/common` — ConfigModule 설정, HttpExceptionFilter
+3. ✅ `libs/database` — TypeORM 연결, 엔티티 정의, pgvector 마이그레이션
+4. ✅ tsconfig path alias 확인, 모노레포 빌드 확인
+
+## Phase 2: 업로드 → 임베딩 (1주) ✅
+5. ✅ `libs/parser` — MarkdownStrategy 먼저
+6. ✅ `libs/embedding` — Xenova 모델 로딩 (싱글톤) + ChunkingService
+7. ✅ `apps/api/documents` — POST /upload 엔드포인트
+8. ✅ 테스트: md 파일 업로드 → pgvector에 벡터 저장 확인
+
+## Phase 3: QA (1주) 🔧 진행 중
+9. ✅ `libs/llm` — ClaudeService + RagService
+10. ✅ `apps/api/chat` — POST /ask 엔드포인트
+11. ✅ Swagger 문서화
+12. ⏸️ 테스트: 질문 → 관련 청크 검색 → Claude 답변 확인
+    - 벡터 검색까지 정상 동작 확인
+    - Claude API 호출은 `.env`에 실제 ANTHROPIC_API_KEY 설정 필요 (현재 placeholder)
+
 ## Phase 4: 문서 수정 (1~2주)
 13. `apps/api/editor` — POST /rewrite (md 먼저)
 14. diff 라이브러리 연동 + 파일 다운로드
 15. DocxStrategy + DocxWriterStrategy 추가
 16. PdfStrategy 추가 (읽기 전용)
- 
+
 ## Phase 5: 프론트엔드 (추후)
 17. `apps/web` — Nuxt 4
  
