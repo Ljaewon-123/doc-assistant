@@ -24,6 +24,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
     "@langchain/core": "^1.1.36",
     "@langchain/textsplitters": "^1.0.1",
     "@nestjs/common": "^11.0.1",
