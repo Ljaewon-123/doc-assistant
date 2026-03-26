@@ -10,3 +10,8 @@ export interface IRewriteResult {
   downloadUrl: string;
   outputPath: string;
 }
+
+export interface IAskResult {
+  answer: string;
+  sources: IChunkSearchResult[];
+}
