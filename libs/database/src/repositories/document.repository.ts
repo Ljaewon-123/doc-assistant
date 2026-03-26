@@ -10,19 +10,19 @@ export class DocumentRepository {
     private readonly repo: Repository<DocumentEntity>,
   ) {}
 
-  save(_document: Partial<DocumentEntity>): Promise<DocumentEntity> {
-    return Promise.reject(new Error('Not implemented'));
+  save(document: Partial<DocumentEntity>): Promise<DocumentEntity> {
+    return this.repo.save(this.repo.create(document));
   }
 
   findAll(): Promise<DocumentEntity[]> {
-    return Promise.reject(new Error('Not implemented'));
+    return this.repo.find({ order: { createdAt: 'DESC' } });
   }
 
-  findById(_id: string): Promise<DocumentEntity | null> {
-    return Promise.reject(new Error('Not implemented'));
+  findById(id: string): Promise<DocumentEntity | null> {
+    return this.repo.findOne({ where: { id } });
   }
 
-  delete(_id: string): Promise<void> {
-    return Promise.reject(new Error('Not implemented'));
+  async delete(id: string): Promise<void> {
+    await this.repo.delete(id);
   }
 }

@@ -11,20 +11,37 @@ export class ChunkRepository {
     private readonly repo: Repository<ChunkEntity>,
   ) {}
 
-  saveMany(_chunks: Partial<ChunkEntity>[]): Promise<ChunkEntity[]> {
-    return Promise.reject(new Error('Not implemented'));
+  saveMany(chunks: Partial<ChunkEntity>[]): Promise<ChunkEntity[]> {
+    return this.repo.save(chunks.map((c) => this.repo.create(c)));
   }
 
-  deleteByDocumentId(_documentId: string): Promise<void> {
-    return Promise.reject(new Error('Not implemented'));
+  async deleteByDocumentId(documentId: string): Promise<void> {
+    await this.repo.delete({ documentId });
   }
 
-  searchSimilar(
-    _queryVector: number[],
-    _documentId?: string,
-    _limit?: number,
+  async searchSimilar(
+    queryVector: number[],
+    documentId?: string,
+    limit = 5,
   ): Promise<IChunkSearchResult[]> {
-    // pgvector cosine similarity 검색 — 구현 시 createQueryBuilder + raw SQL 사용
-    return Promise.reject(new Error('Not implemented'));
+    const vectorStr = `[${queryVector.join(',')}]`;
+    const qb = this.repo
+      .createQueryBuilder('chunk')
+      .select('chunk.content', 'content')
+      .addSelect('chunk.sectionTitle', 'sectionTitle')
+      .addSelect('chunk.chunkIndex', 'chunkIndex')
+      .addSelect(
+        `1 - (chunk.embedding <=> '${vectorStr}'::vector)`,
+        'similarity',
+      );
+
+    if (documentId) {
+      qb.where('chunk.document_id = :documentId', { documentId });
+    }
+
+    return qb
+      .orderBy(`chunk.embedding <=> '${vectorStr}'::vector`)
+      .limit(limit)
+      .getRawMany<IChunkSearchResult>();
   }
 }
