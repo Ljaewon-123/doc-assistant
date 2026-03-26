@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 
 @Injectable()
 export class ChunkingService {
-  constructor(private readonly configService: ConfigService) {}
+  private readonly splitter: RecursiveCharacterTextSplitter;
 
-  chunk(_text: string): Promise<string[]> {
-    // RecursiveCharacterTextSplitter (LangChain) 사용
-    return Promise.reject(new Error('Not implemented'));
+  constructor(private readonly configService: ConfigService) {
+    this.splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: this.configService.get<number>('chunkSize', 1000),
+      chunkOverlap: this.configService.get<number>('chunkOverlap', 200),
+    });
+  }
+
+  async chunk(text: string): Promise<string[]> {
+    return await this.splitter.splitText(text);
   }
 }
