@@ -6,7 +6,15 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import pgvector from 'pgvector';
 import { DocumentEntity } from './document.entity';
+
+// pgvector SQL 문자열 <-> number[] 변환 트랜스포머
+const vectorTransformer = {
+  to: (value: number[]): string => pgvector.toSql(value),
+  from: (value: string | number[]): number[] =>
+    Array.isArray(value) ? value : pgvector.fromSql(value),
+};
 
 @Entity('chunks')
 export class ChunkEntity {
@@ -31,8 +39,14 @@ export class ChunkEntity {
   @Column({ length: 255, nullable: true })
   sectionTitle: string;
 
-  // pgvector — 마이그레이션에서 ALTER COLUMN ... TYPE vector(384)
-  @Column('float', { array: true })
+  // TypeORM이 vector 타입을 regtype 기반으로 인식함 (PostgresQueryRunner 내장 지원)
+  // type: 'vector', length: '384' 로 정의하면 DB의 vector(384)와 타입이 일치해 ALTER 불필요
+  // transformer: INSERT/UPDATE 시 number[] → pgvector SQL 문자열, SELECT 시 역변환
+  @Column({
+    type: 'vector' as 'text',
+    length: '384',
+    transformer: vectorTransformer,
+  })
   embedding: number[];
 
   @CreateDateColumn()

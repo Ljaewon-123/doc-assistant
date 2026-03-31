@@ -36,7 +36,7 @@ export class ChunkRepository {
       );
 
     if (documentId) {
-      qb.where('chunk.document_id = :documentId', { documentId });
+      qb.where('chunk.documentId = :documentId', { documentId });
     }
 
     return qb
