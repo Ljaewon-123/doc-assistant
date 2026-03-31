@@ -19,13 +19,15 @@
 7. ✅ `apps/api/documents` — POST /upload 엔드포인트
 8. ✅ 테스트: md 파일 업로드 → pgvector에 벡터 저장 확인
 
-## Phase 3: QA (1주) 🔧 진행 중
+## Phase 3: QA (1주) ✅
 9. ✅ `libs/llm` — ClaudeService + RagService
 10. ✅ `apps/api/chat` — POST /ask 엔드포인트
 11. ✅ Swagger 문서화
-12. ⏸️ 테스트: 질문 → 관련 청크 검색 → Claude 답변 확인
-    - 벡터 검색까지 정상 동작 확인
-    - Claude API 호출은 `.env`에 실제 ANTHROPIC_API_KEY 설정 필요 (현재 placeholder)
+12. ✅ 테스트: 질문 → 관련 청크 검색 → Claude 답변 확인
+    - SnakeNamingStrategy + autoLoadEntities 적용
+    - ChunkEntity vector 타입 native 지원 (pgvector transformer)
+    - DB 컬럼 camelCase → snake_case 마이그레이션
+    - end-to-end QA 파이프라인 검증 완료
 
 ## Phase 4: 문서 수정 (1~2주)
 13. `apps/api/editor` — POST /rewrite (md 먼저)
