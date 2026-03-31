@@ -3,7 +3,7 @@
 | 영역 | 기술 | 선택 이유 |
 |------|------|-----------|
 | Runtime | Node.js v24+ | 프로젝트 요구사항 |
-| Framework | NestJS v11 (monorepo) | 회사 환경 맞춤 + 모노레포 경험 |
+| Framework | NestJS v11 (monorepo) | 회사 환경 맞춤 + 모노레포  |
 | Language | TypeScript v5.x | 프로젝트 요구사항 |
 | LLM | Claude Haiku 4.5 | 저비용($1/$5 MTok), RAG 충분 |
 | Embedding | @xenova/transformers | 로컬 실행, 무료, ~80MB |
