@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { InjectDataSource, TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { DataSource } from 'typeorm';
 import { ChunkEntity } from './entities/chunk.entity';
 import { DocumentEntity } from './entities/document.entity';
 import { ChunkRepository } from './repositories/chunk.repository';
@@ -26,4 +27,10 @@ import { DocumentRepository } from './repositories/document.repository';
   providers: [DocumentRepository, ChunkRepository],
   exports: [DocumentRepository, ChunkRepository],
 })
-export class DatabaseModule {}
+export class DatabaseModule implements OnModuleInit {
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+
+  async onModuleInit(): Promise<void> {
+    await this.dataSource.query('CREATE EXTENSION IF NOT EXISTS vector');
+  }
+}
