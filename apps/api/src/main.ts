@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 
 // TypeORM 0.3.x 내부 버그: synchronize 시 동일 pg.Client에 병렬 쿼리를 날려 발생하는 경고.
 // process.on('warning')은 출력 이후 호출되므로 억제 불가 → emitWarning 자체를 override.
+// 개인적으로 너무 별로인 방식같은데
 const originalEmitWarning = process.emitWarning.bind(process);
 process.emitWarning = (warning: string | Error, ...args: unknown[]) => {
   const msg = warning instanceof Error ? warning.message : String(warning);
