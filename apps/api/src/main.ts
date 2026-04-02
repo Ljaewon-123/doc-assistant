@@ -5,14 +5,15 @@ import { AppModule } from './app.module';
 // TypeORM 0.3.x 내부 버그: synchronize 시 동일 pg.Client에 병렬 쿼리를 날려 발생하는 경고.
 // process.on('warning')은 출력 이후 호출되므로 억제 불가 → emitWarning 자체를 override.
 // 개인적으로 너무 별로인 방식같은데
-const originalEmitWarning = process.emitWarning.bind(process);
+const originalEmitWarning = process.emitWarning.bind(
+  process,
+) as typeof process.emitWarning;
 process.emitWarning = (warning: string | Error, ...args: unknown[]) => {
   const msg = warning instanceof Error ? warning.message : String(warning);
   if (msg.includes('client.query() when the client is already executing')) {
     return;
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  originalEmitWarning(warning as any, ...(args as any[]));
+  Reflect.apply(originalEmitWarning, process, [warning, ...args]);
 };
 
 async function bootstrap(): Promise<void> {

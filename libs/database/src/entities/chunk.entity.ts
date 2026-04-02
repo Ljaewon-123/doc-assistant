@@ -11,9 +11,9 @@ import { DocumentEntity } from './document.entity';
 
 // pgvector SQL 문자열 <-> number[] 변환 트랜스포머
 const vectorTransformer = {
-  to: (value: number[]): string => pgvector.toSql(value),
+  to: (value: number[]): string => pgvector.toSql(value) as string,
   from: (value: string | number[]): number[] =>
-    Array.isArray(value) ? value : pgvector.fromSql(value),
+    Array.isArray(value) ? value : (pgvector.fromSql(value) as number[]),
 };
 
 @Entity('chunks')
