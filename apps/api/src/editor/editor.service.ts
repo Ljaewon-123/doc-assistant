@@ -9,10 +9,13 @@ import { Response } from 'express';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { createPatch } from 'diff';
+import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { DocumentRepository } from '@app/database';
 import { RagService } from '@app/llm';
+import { ParserService } from '@app/parser';
 import { AppConfig, IRewriteResult } from '@app/common';
 import { MarkdownWriterStrategy } from './strategies/markdown-writer.strategy';
+import { DocxWriterStrategy } from './strategies/docx-writer.strategy';
 
 @Injectable()
 export class EditorService {
@@ -21,7 +24,9 @@ export class EditorService {
   constructor(
     private readonly documentRepository: DocumentRepository,
     private readonly ragService: RagService,
+    private readonly parserService: ParserService,
     private readonly markdownWriter: MarkdownWriterStrategy,
+    private readonly docxWriter: DocxWriterStrategy,
     private readonly configService: ConfigService<AppConfig>,
   ) {}
 
@@ -38,7 +43,12 @@ export class EditorService {
       throw new BadRequestException('PDF 문서는 수정할 수 없습니다');
     }
 
-    const originalContent = await fs.readFile(document.filePath, 'utf-8');
+    const isDocx = document.fileType === 'docx';
+
+    // 원본 텍스트 추출 (md: 직접 읽기, docx: mammoth로 추출)
+    const originalContent = isDocx
+      ? await this.parserService.parse(document.filePath, 'docx')
+      : await fs.readFile(document.filePath, 'utf-8');
 
     // 섹션 추출 또는 전체 문서 사용
     const sectionContent = section
@@ -55,11 +65,17 @@ export class EditorService {
     );
 
     // 수정된 전체 문서 생성
-    const modifiedContent = await this.markdownWriter.rewrite(
-      document.filePath,
-      sectionContent,
-      rewrittenSection,
-    );
+    const modifiedContent = isDocx
+      ? await this.docxWriter.rewrite(
+          document.filePath,
+          sectionContent,
+          rewrittenSection,
+        )
+      : await this.markdownWriter.rewrite(
+          document.filePath,
+          sectionContent,
+          rewrittenSection,
+        );
 
     // Unified diff 생성
     const diff = createPatch(
@@ -75,8 +91,16 @@ export class EditorService {
       infer: true,
     })!;
     await fs.mkdir(outputDir, { recursive: true });
-    const outputPath = path.join(outputDir, `${documentId}.md`);
-    await fs.writeFile(outputPath, modifiedContent, 'utf-8');
+
+    const ext = isDocx ? 'docx' : 'md';
+    const outputPath = path.join(outputDir, `${documentId}.${ext}`);
+
+    if (isDocx) {
+      const buffer = await this.textToDocxBuffer(modifiedContent);
+      await fs.writeFile(outputPath, buffer);
+    } else {
+      await fs.writeFile(outputPath, modifiedContent, 'utf-8');
+    }
 
     this.logger.log(`Rewritten file saved: ${outputPath}`);
 
@@ -91,7 +115,14 @@ export class EditorService {
     const outputDir = this.configService.get<string>('outputDir', {
       infer: true,
     })!;
-    const outputPath = path.join(outputDir, `${id}.md`);
+
+    const document = await this.documentRepository.findById(id);
+    if (!document) {
+      throw new NotFoundException(`Document ${id} not found`);
+    }
+
+    const ext = document.fileType === 'docx' ? 'docx' : 'md';
+    const outputPath = path.join(outputDir, `${id}.${ext}`);
 
     try {
       await fs.access(outputPath);
@@ -138,5 +169,35 @@ export class EditorService {
     }
 
     return lines.slice(startIdx, endIdx).join('\n');
+  }
+
+  private async textToDocxBuffer(text: string): Promise<Buffer> {
+    const paragraphs = text.split('\n').map((line) => {
+      const h1 = /^#\s+(.+)/.exec(line);
+      if (h1) {
+        return new Paragraph({
+          children: [new TextRun({ text: h1[1], bold: true, size: 32 })],
+        });
+      }
+      const h2 = /^##\s+(.+)/.exec(line);
+      if (h2) {
+        return new Paragraph({
+          children: [new TextRun({ text: h2[1], bold: true, size: 28 })],
+        });
+      }
+      const h3 = /^###\s+(.+)/.exec(line);
+      if (h3) {
+        return new Paragraph({
+          children: [new TextRun({ text: h3[1], bold: true, size: 24 })],
+        });
+      }
+      return new Paragraph({ children: [new TextRun(line)] });
+    });
+
+    const doc = new Document({
+      sections: [{ properties: {}, children: paragraphs }],
+    });
+
+    return Packer.toBuffer(doc);
   }
 }
