@@ -29,6 +29,7 @@
 - Docker / 환경변수 / 패키지: @docs/environment.md
 - 코딩 컨벤션 & 금지 사항: @docs/conventions.md
 - 프론트엔드 스펙 & 아키텍처: @docs/frontend.md
+- 실행 방법 (개발/프로덕션): @docs/running.md
 
 ---
 
