@@ -42,12 +42,12 @@
 ## Phase 5: 프론트엔드 (Vue(TS) + Vite SPA)
 
 17. ✅ `docs/frontend.md` 작성 + `CLAUDE.md` Lazy Loading 연결 + `dev-phases.md` 계획 수립
-18. `apps/web/` Vite 프로젝트 초기화 (vue-ts 템플릿) + ofetch 설치
-19. NestJS `ServeStaticModule` 연동 + 개발 환경 CORS + Vite proxy 설정
-20. `DocumentList.vue` — `GET /documents` 목록 + 삭제
-21. `UploadZone.vue` — 드래그앤드랍 + 버튼 → `POST /documents/upload`
-22. `ChatPanel.vue` — 채팅 UI (`POST /chat/ask`, 대화 비저장)
-23. `Dockerfile` 멀티스테이지 빌드 + `docker-compose.yml` api 서비스 추가
+18. ✅ `apps/web/` Vite 프로젝트 초기화 (vue-ts 템플릿) + ofetch 설치
+19. ✅ NestJS `ServeStaticModule` 연동 + 개발 환경 CORS + Vite proxy 설정
+20. ✅ `DocumentList.vue` — `GET /documents` 목록 + 삭제
+21. ✅ `UploadZone.vue` — 드래그앤드랍 + 버튼 → `POST /documents/upload`
+22. ✅ `ChatPanel.vue` — 채팅 UI (`POST /chat/ask`, 대화 비저장)
+23. ✅ `Dockerfile` 멀티스테이지 빌드 + `docker-compose.yml` api 서비스 추가
 
 ## 포트폴리오 어필 포인트
 
