@@ -1,5 +1,7 @@
+import { join } from 'path';
 import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { CommonModule, HttpExceptionFilter } from '@app/common';
 import { DatabaseModule } from '@app/database';
 import { DocumentsModule } from './documents/documents.module';
@@ -14,6 +16,11 @@ import { HealthController } from './health/health.controller';
     DocumentsModule,
     ChatModule,
     EditorModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', '..', 'apps', 'web', 'dist'),
+      exclude: ['/api/(.*)', '/health'],
+      renderPath: '/*',
+    }),
   ],
   controllers: [HealthController],
   providers: [

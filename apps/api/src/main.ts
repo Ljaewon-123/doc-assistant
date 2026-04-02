@@ -18,6 +18,8 @@ process.emitWarning = (warning: string | Error, ...args: unknown[]) => {
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({ origin: 'http://localhost:5173' });
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Doc Assistant API')
     .setDescription('문서 업로드, QA, 수정 API')
