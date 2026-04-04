@@ -16,6 +16,8 @@ services:
     ports:
       - '3000:3000'
     env_file: .env
+    environment:
+      DATABASE_URL: postgresql://docassist:docassist@postgres:5432/doc_assistant
     depends_on:
       - postgres
     volumes:

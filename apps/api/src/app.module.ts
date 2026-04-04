@@ -17,9 +17,9 @@ import { HealthController } from './health/health.controller';
     ChatModule,
     EditorModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', '..', 'apps', 'web', 'dist'),
-      exclude: ['/api/(.*)', '/health'],
-      renderPath: '/*',
+      rootPath: join(process.cwd(), 'apps', 'web', 'dist'),
+      exclude: ['/api/{*splat}', '/health'],
+      renderPath: '/{*splat}',
     }),
   ],
   controllers: [HealthController],

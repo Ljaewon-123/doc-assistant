@@ -19,6 +19,7 @@ process.emitWarning = (warning: string | Error, ...args: unknown[]) => {
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix('api', { exclude: ['health'] });
   app.enableCors({ origin: 'http://localhost:5173' });
 
   const swaggerConfig = new DocumentBuilder()

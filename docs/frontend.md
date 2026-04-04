@@ -102,8 +102,8 @@ NestJS ServeStaticModule → dist/ 서빙
 // app.module.ts
 ServeStaticModule.forRoot({
   rootPath: join(__dirname, '..', '..', '..', 'apps', 'web', 'dist'),
-  exclude: ['/api/(.*)', '/health'],
-  renderPath: '/*',   // SPA fallback (Vue Router history mode)
+  exclude: ['/api/{*splat}', '/health'],
+  renderPath: '/{*splat}',   // SPA fallback (Vue Router history mode)
 })
 ```
 
